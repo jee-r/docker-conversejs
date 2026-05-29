@@ -41,7 +41,7 @@ jobs:
         run: |
           echo "SHORT_SHA=$(echo ${GITHUB_SHA} | cut -c1-8)" >> $GITHUB_ENV
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Extract ConverseJS version from Dockerfile
         run: |
           VERSION=$(grep -oP 'ARG CONVERSEJS_VERSION=\K[^\s]+' Dockerfile)
