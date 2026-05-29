@@ -45,20 +45,19 @@ services:
       # Rooms
       - AUTO_JOIN_ROOMS=general@conference.example.org
       # - MUC_SHOW_LOGS_BEFORE_JOIN=false
-      # - MUC_FETCH_MEMBERS="member","admin","owner"
+      # - MUC_FETCH_MEMBERS=member,admin,owner
       # Nickname
       # - NICKNAME_PREFIX=anon
       # - DEFAULT_NICKNAME=
       # UI
       - VIEW_MODE=fullscreen
-      # - THEME=nordic
-      # - DARK_THEME=nordic
+      # - THEME=nord
+      # - DARK_THEME=nord
       # Session
       - SINGLETON=true
       - KEEPALIVE=true
       - ALLOW_LOGOUT=true
       - CLEAR_CACHE_ON_LOGOUT=true
-      - SHOW_ONLY_ONLINE_USERS=true
       - HIDE_OFFLINE_USERS=true
     volumes:
       - /etc/localtime:/etc/localtime:ro
@@ -240,7 +239,7 @@ Variables marked `mixed` accept either a boolean (`true`/`false`) or a string va
 | `SHOW_CONTROLBOX_BY_DEFAULT` | `false` | Show contacts panel on load |
 | `STICKY_CONTROLBOX` | `false` | Prevent the controlbox from being closed |
 | `SHOW_IMAGES_INLINE` | `true` | Render images inline in chats |
-| `RENDER_MEDIA` | `true` | `mixed`: `true`, `false`, or domain allowlist |
+| `RENDER_MEDIA` | `true` | `mixed-array`: `true`, `false`, or comma-separated domain allowlist |
 | `EMBED_3RD_PARTY_MEDIA_PLAYERS` | `true` | Embed YouTube, Spotify etc. |
 | `USE_SYSTEM_EMOJIS` | `true` | Use OS emojis instead of Twemoji |
 | `EMOJI_IMAGE_PATH` | — | Custom URL for Twemoji images |
@@ -260,9 +259,6 @@ Variables marked `mixed` accept either a boolean (`true`/`false`) or a string va
 | `ALLOW_MUC_INVITATIONS` | `true` | Allow room invitations |
 | `SINGLETON` | `false` | Allow only one open chat at a time |
 | `ALLOW_LOGOUT` | `true` | Show the logout button |
-| `XHR_USER_SEARCH_URL` | — | URL for server-side user search |
-| `GEOURI_REPLACEMENT` | — | URL template replacing `geo:` URIs (use `{lat}` and `{lon}` placeholders) |
-| `GEOURI_REGEX` | — | JS regex literal to detect geo URIs (e.g. `/geo:[0-9.-]+,[0-9.-]+/`) |
 
 ### Notifications
 
@@ -277,6 +273,14 @@ Variables marked `mixed` accept either a boolean (`true`/`false`) or a string va
 | `SHOW_CHAT_STATE_NOTIFICATIONS` | `false` | Desktop notifications for chat state changes |
 | `NOTIFICATION_DELAY` | `5000` | Milliseconds to display desktop notifications |
 | `NOTIFICATION_ICON` | — | Custom icon URL for desktop notifications |
+
+### Misc
+
+| Variable | Default | Description |
+|---|---|---|
+| `XHR_USER_SEARCH_URL` | — | URL for server-side user search |
+| `GEOURI_REPLACEMENT` | — | URL template replacing `geo:` URIs (use `{lat}` and `{lon}` placeholders) |
+| `GEOURI_REGEX` | — | JS regex literal to detect geo URIs (e.g. `/geo:[0-9.-]+,[0-9.-]+/`) |
 
 ### Plugins
 
@@ -335,7 +339,7 @@ Example output with both URLs set:
 podman build --network host -t conversejs .
 
 # Override ConverseJS version
-podman build --network host --build-arg CONVERSEJS_VERSION=12.0.0 -t conversejs .
+podman build --network host --build-arg CONVERSEJS_VERSION=13.0.1 -t conversejs .
 ```
 
 The ConverseJS release archive is downloaded from GitHub at build time. The version is controlled by the `CONVERSEJS_VERSION` build arg — see [converse.js releases](https://github.com/conversejs/converse.js/releases) for available versions.
