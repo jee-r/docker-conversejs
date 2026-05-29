@@ -1,0 +1,91 @@
+name: Deploy
+
+permissions:
+  contents: read
+  packages: write
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - dev
+    paths-ignore:
+      - '**.md'
+  schedule:
+    - cron: '33 3 * * 1'
+
+jobs:
+  build:
+    name: Build, tag, and publish Docker image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get branch
+        run: |
+          echo "GIT_BRANCH=${GITHUB_BASE_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_ENV
+      - name: Set main docker image tag
+        run: |
+          if [[ "${{ env.GIT_BRANCH }}" == "main" ]] || [[ "${{ env.GIT_BRANCH }}" == "master" ]]; then
+            echo "MAIN_DOCKER_TAG=latest" >> $GITHUB_ENV
+          else
+            echo "MAIN_DOCKER_TAG=${{ env.GIT_BRANCH }}" >> $GITHUB_ENV
+          fi
+      - name: Remove docker prefix from repo name
+        run: |
+          echo "IMAGE_NAME=$(echo ${{ github.repository }} | sed 's|^jee-r/docker-||g')" >> $GITHUB_ENV
+      - name: Crop SHA
+        run: |
+          echo "SHORT_SHA=$(echo ${GITHUB_SHA} | cut -c1-8)" >> $GITHUB_ENV
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Extract ConverseJS version from Dockerfile
+        run: |
+          VERSION=$(grep -oP 'ARG CONVERSEJS_VERSION=\K[^\s]+' Dockerfile)
+          echo "CONVERSEJS_VERSION=${VERSION}" >> $GITHUB_ENV
+          echo "CONVERSEJS_MINOR=$(echo ${VERSION} | cut -d. -f1-2)" >> $GITHUB_ENV
+          echo "CONVERSEJS_MAJOR=$(echo ${VERSION} | cut -d. -f1)" >> $GITHUB_ENV
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          install: true
+          version: latest
+          driver-opts: image=moby/buildkit:master
+      - name: Login into DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Login into GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build and Push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile
+          platforms: linux/amd64,linux/arm64,linux/arm/v7
+          push: true
+          build-args: |
+            CONVERSEJS_VERSION=${{ env.CONVERSEJS_VERSION }}
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${{ env.SHORT_SHA }}
+            ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${{ env.CONVERSEJS_VERSION }}
+            ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${{ env.CONVERSEJS_MINOR }}
+            ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${{ env.CONVERSEJS_MAJOR }}
+            ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${{ env.GIT_BRANCH }}
+            ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${{ env.MAIN_DOCKER_TAG }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ env.SHORT_SHA }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ env.CONVERSEJS_VERSION }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ env.CONVERSEJS_MINOR }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ env.CONVERSEJS_MAJOR }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ env.GIT_BRANCH }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ env.MAIN_DOCKER_TAG }}

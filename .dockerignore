@@ -1,0 +1,17 @@
+# Git
+.git
+.gitignore
+
+# CI
+.github/
+
+# Documentation
+README.md
+LICENSE
+
+# Compose files
+docker-compose*.yml
+
+# Editor / IDE
+.vscode/
+.idea/
