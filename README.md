@@ -2,8 +2,6 @@
 
 Docker image serving [ConverseJS](https://conversejs.org/) via nginx. The `index.html` and nginx config are generated at container startup from environment variables.
 
-Most converse.js options are exposed as environment variables. Options that accept arrays of strings use a comma-separated value. Options that accept a boolean or an array of strings are noted `mixed-array`. Raw JS regex literals can be passed directly (e.g. `/pattern/flags`). For complex types (objects, arrays of objects) that cannot be expressed as a single string, use [`CONVERSE_EXTRA_CONFIG`](#converse_extra_config). Truly unsupported options (require structured data): `connection_options`, `emoji_categories`, `visible_toolbar_buttons`, `push_app_servers`, `oauth_providers`, `muc_hats`.
-
 ## Images
 
 | Registry | Image |
@@ -81,6 +79,8 @@ podman run -d \
 ## Environment variables
 
 All variables are optional. If unset or empty, the option is omitted and converse.js uses its own default.
+
+Most converse.js options are exposed as environment variables. Options that accept arrays of strings use a comma-separated value. Options that accept a boolean or an array of strings are noted `mixed-array`. Raw JS regex literals can be passed directly (e.g. `/pattern/flags`). For complex types (objects, arrays of objects) that cannot be expressed as a single string, use [`CONVERSE_EXTRA_CONFIG`](#converse_extra_config). Truly unsupported options (require structured data): `connection_options`, `emoji_categories`, `visible_toolbar_buttons`, `push_app_servers`, `oauth_providers`, `muc_hats`.
 
 Variables marked `mixed` accept either a boolean (`true`/`false`) or a string value — see the [converse.js docs](https://conversejs.org/docs/html/configuration.html) for valid values.
 
