@@ -49,7 +49,7 @@ jobs:
           echo "CONVERSEJS_MINOR=$(echo ${VERSION} | cut -d. -f1-2)" >> $GITHUB_ENV
           echo "CONVERSEJS_MAJOR=$(echo ${VERSION} | cut -d. -f1)" >> $GITHUB_ENV
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
+        uses: docker/setup-qemu-action@v4
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
         with:
