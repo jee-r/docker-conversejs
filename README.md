@@ -9,7 +9,6 @@ Most converse.js options are exposed as environment variables. Options that acce
 | Registry | Image |
 |---|---|
 | GitHub Container Registry | `ghcr.io/jee-r/conversejs` |
-| Docker Hub | `jee-r/conversejs` |
 
 ### Tags
 
@@ -347,7 +346,5 @@ Two GitHub Actions workflows are provided:
 
 | Workflow | Trigger | Action |
 |---|---|---|
-| `deploy.yaml` | Push to `main`/`dev`, weekly schedule, manual | Build multi-arch image (`amd64`, `arm64`, `armv7`) and push to GHCR + Docker Hub |
+| `deploy.yaml` | Push to `main`/`dev`, weekly schedule, manual | Build multi-arch image (`amd64`, `arm64`, `armv7`) and push to GHCR |
 | `build_test.yaml` | Push to feature branches, PRs to `main`/`dev` | Build only, no push |
-
-Required repository secrets: `DOCKERHUB_USERNAME`, `DOCKERHUB_TOKEN`.
