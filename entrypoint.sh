@@ -130,13 +130,10 @@ cat > "$HTML_OUTPUT" << HTML
     <div id="conversejs-bg"></div>
 </body>
 <script type="module">
-window.addEventListener('converse-loaded', (ev) => {
-    const converse = ev.detail.converse;
 ${NICKNAME_JS}
     converse.initialize({
 ${CFG}
     });
-});
 </script>
 </html>
 HTML
