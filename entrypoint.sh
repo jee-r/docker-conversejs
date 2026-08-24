@@ -124,16 +124,19 @@ cat > "$HTML_OUTPUT" << HTML
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <title>${APP_TITLE:-ConverseJS}</title>
     <link rel="stylesheet" type="text/css" media="screen" href="/package/dist/converse.min.css">
-    <script src="/package/dist/converse.min.js" charset="utf-8"></script>
+    <script type="module" src="/package/dist/converse.min.js"></script>
 </head>
 <body>
     <div id="conversejs-bg"></div>
 </body>
-<script>
+<script type="module">
+window.addEventListener('converse-loaded', (ev) => {
+    const converse = ev.detail.converse;
 ${NICKNAME_JS}
     converse.initialize({
 ${CFG}
     });
+});
 </script>
 </html>
 HTML
