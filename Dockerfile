@@ -1,7 +1,7 @@
 # Stage 1: Download and prepare ConverseJS
 FROM alpine:latest AS builder
 # renovate: datasource=github-releases depName=conversejs/converse.js
-ARG CONVERSEJS_VERSION=14.0.0
+ARG CONVERSEJS_VERSION=14.0.1
 WORKDIR /build
 RUN apk add --no-cache wget tar \
     && wget --no-verbose https://github.com/conversejs/converse.js/releases/download/v${CONVERSEJS_VERSION}/converse.js-${CONVERSEJS_VERSION}.tgz \
